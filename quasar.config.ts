@@ -5,9 +5,9 @@
 
 
 import { configure } from 'quasar/wrappers';
+import { fileURLToPath } from 'node:url';
 
-
-export default configure((/* ctx */) => {
+export default configure((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -16,8 +16,9 @@ export default configure((/* ctx */) => {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-      
+      // 'i18n',
       'axios',
+      {server: false, path: 'brand-colors'}
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -55,7 +56,11 @@ export default configure((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        API: 'https://product-quiz-backend-872d00ae8b9d.herokuapp.com'
+        // API: 'http://localhost:3000'
+
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -65,15 +70,35 @@ export default configure((/* ctx */) => {
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 
-      
-      // vitePlugins: [
-      //   [ 'package-name', { ..pluginOptions.. }, { server: true, client: true } ]
-      // ]
+      vitePlugins: [
+        ['@intlify/unplugin-vue-i18n/vite', {
+          // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
+          // compositionOnly: false,
+
+          // if you want to use named tokens in your Vue I18n messages, such as 'Hello {name}',
+          // you need to set `runtimeOnly: false`
+          // runtimeOnly: false,
+
+          ssr: ctx.modeName === 'ssr',
+
+          // you need to set i18n resource including paths !
+          include: [ fileURLToPath(new URL('./src/i18n', import.meta.url)) ],
+        }]
+      ]
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/query': {
+          target: 'https://product-quiz-backend-872d00ae8b9d.herokuapp.com/query',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/query/, '')
+        }
+      },
+      cors: false,
       open: true // opens browser window automatically
     },
 
@@ -97,7 +122,7 @@ export default configure((/* ctx */) => {
 
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
-    animations: [],
+    animations: 'all',
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     // sourceFiles: {
@@ -192,7 +217,7 @@ export default configure((/* ctx */) => {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'final-project'
+        appId: 'quasar-project'
       }
     },
 
