@@ -1,28 +1,16 @@
 <template>
-  <div class="text-h5 q-my-md text-weight-bold font-sans">
-    {{ props.Question }}
-  </div>
-  <div class="text-subtitle1 q-my-sm font-sans text-weight-medium text-secondary">
-    {{ props.SubQuestion }}
+  <div class="text-h5 q-mt-sm q-mb-sm font-primary">
+    <p class="text-h5 text-weight-bold">{{ props.Question }}</p>
   </div>
   <div class="">
     <div class="row q-ml-none">
-      <!-- <draggable
-        :list="list"
-        class="full-width"
-        ghost-class="ghost"
-        @start="dragging = true"
-        @end="dragging = false"
-        :item-key="(item: any, index: any) => index"
-      >
-        <template #item="{ element, index }"> -->
       <div class="row">
-        <div v-for="element in priorityList" class="col-12 q-py-md">
-          <div class="row">
-            <!-- bg-secondary text-white -->
-            <div class="col-11 q-px-md">
+        <div v-for="element in priorityList" class="col-md-12 q-py-sm col-sm-12 col-xs-12">
+            <div class="q-px-md">
               <q-btn
-                class="full-width rounded-lg"
+                class="full-width sticky-questions"
+                outline
+                color="secondary"
                 size="18px"
                 :class="{ 'bg-secondary text-white': element.value }"
                 @click="selectedProductPriority(element)"
@@ -62,7 +50,7 @@
                 {{ element.name }}
               </q-btn>
             </div>
-          </div>
+          <!-- </div> -->
         </div>
       </div>
       <!-- </template>
@@ -73,9 +61,8 @@
     <div class="q-mt-md">
       <q-btn
         size="12px"
-        color="black"
         outline
-        class="text-body2 text-uppercase"
+        class="text-uppercase sticky-next-or-back"
         @click="backbutton()"
       >
         <q-icon name="keyboard_double_arrow_left" />
@@ -287,7 +274,7 @@ const applyAnimation = () => {
     }
   }
   productStore.productDetails[productStore.firstQuestionAskedOrNot] = productStore.newProducts
-  console.log('newProducts: ', productStore.productDetails[productStore.firstQuestionAskedOrNot]);
+  // console.log('newProducts: ', productStore.productDetails[productStore.firstQuestionAskedOrNot]);
 };
 
 const backbutton = () => {

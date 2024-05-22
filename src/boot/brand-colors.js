@@ -3,7 +3,7 @@ import { boot } from 'quasar/wrappers'
 
 export default boot(() => {
   setCssVar('primary', '#22223B')
-  setCssVar('secondary', '#587a66') // greenn
+  setCssVar('secondary', '#0077bf') // blue
   setCssVar('info', '#00000005') 
   setCssVar('accent', '#424342')
   //   setCssVar('primary', '#0C1B33')

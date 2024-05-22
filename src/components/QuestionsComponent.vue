@@ -13,15 +13,17 @@
     </div>
   </transition>
   <div class="">
-    <div class="row q-col-gutter-lg q-ml-none">
+    <div class="row">
       <div
-        class="col-12 q-pr-md"
+        class="col-md-12 col-sm-12 col-xs-12 q-mb-md q-px-md"
         v-for="Option in props.Options"
         v-if="productStore.firstQuestionAskedOrNot == 0"
       >
         <transition appear enter-active-class="animated fadeInUp repeat">
           <q-btn
-            class="full-width rounded-lg bg-secondary text-white"
+            outline 
+            color="secondary"
+            class="full-width sticky-questions"
             :class="{
               active:
                 Option.value === productStore.budsOrHeadphones ||
@@ -36,10 +38,12 @@
           </q-btn>
         </transition>
       </div>
-      <div class="col-6 q-pr-md" v-for="Option in props.Options" v-else>
+      <div class="col-md-12 col-sm-12 col-xs-12 q-mb-md q-px-md" v-for="Option in props.Options" v-else>
         <transition appear enter-active-class="animated fadeInUp repeat">
           <q-btn
-            class="full-width rounded-lg bg-secondary text-white"
+            outline 
+            color="secondary"
+            class="full-width sticky-questions"
             :class="{
               active:
                 Option.value === productStore.budsOrHeadphones ||

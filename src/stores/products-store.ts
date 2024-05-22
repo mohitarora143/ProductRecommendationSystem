@@ -5,7 +5,7 @@ import json from "../assets/api_response.json";
 export const useProductStore = defineStore("product", {
   state: () => ({
     budsOrHeadphones: "",
-    wiredOrWireless: "",
+    wiredOrWireless: "WirelessConnectivity",
     firstQuestionAskedOrNot: 0,
     productDetails: [],
     threeDarray: [],
@@ -34,7 +34,7 @@ export const useProductStore = defineStore("product", {
         this.fitOnSmallEar,
         this.deviceType
       );
-      this.productDetails[this.firstQuestionAskedOrNot+1] = response.data.results.bindings;
+      this.productDetails[this.firstQuestionAskedOrNot+1] = response.data;
 
       for (let i = 0; i < 3; i++) {
         if (
@@ -89,7 +89,10 @@ export const useProductStore = defineStore("product", {
         const prices = this.productDetails[this.firstQuestionAskedOrNot].map((product) =>
           parseFloat(product.price.value)
         );
-        return Math.min(...prices) - 1; // Use Math.min to find the minimum value
+        if(Math.min(...prices)>0){
+          return Math.min(...prices) - 1;// Use Math.min to find the minimum value
+        }
+        else return Math.min(...prices);
       } else {
         return 0;
       }

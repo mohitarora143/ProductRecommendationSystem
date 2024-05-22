@@ -1,11 +1,10 @@
 <template>
-  <div class="flex justify-between q-px-md q-mt-xl">
+  <div class="flex justify-between q-px-md q-mt-md">
     <div class="">
       <q-btn
         size="12px"
         outline
-        color="accent"
-        class="text-body2 text-uppercase q-px-xl"
+        class="text-uppercase q-px-lg sticky-next-or-back"
         @click="backbutton()"
         :class="{ disabled: productStore.storeLoader }"
       >
@@ -20,8 +19,7 @@
       <q-btn
         size="12px"
         outline
-        color="accent"
-        class="text-body2 text-uppercase q-px-xl"
+        class="text-uppercase q-px-lg sticky-next-or-back"
         @click="skipbutton()"
       >
         <div>Next</div>

@@ -1,10 +1,12 @@
 <template>
-  <div class="row q-mt-lg q-mb-xl">
-    <div class="col-md-7">
+  <div class="row q-mb-xl q-mt-lg">
+    <div class="col-md-12 col-xs-12">
       <div class="text-h6 font-sans text-weight-medium">Price range</div>
       <div class="text-subtitle2 font-sans text-weight-medium">
         The average highly price is {{ calculateAverage.toFixed(2) }}$
       </div>
+      <div class="row">
+      <div class="col-sm-10 q-mx-auto col-xs-8">
       <div id="app">
         <div class="chart">
           <div class="bar-container" id="bar-container">
@@ -12,7 +14,7 @@
             <div
               v-for="(point, index) in productsCountInRanges"
               :key="index"
-              class="bar bg-secondary"
+              class="bar bg-blue"
               :style="{ height: barHeight(point), left: barLeft(point) }"
             >
               <q-tooltip anchor="top middle" self="center middle">
@@ -25,16 +27,24 @@
       </div>
       <div class="q-mb-lg">
         <q-range
-          color="secondary"
-          v-model="standard"
-          :min="minval"
-          :max="maxval"
-          label-always
-          switch-label-side
-          :left-label-value="`${standard.min} $`"
-          :right-label-value="`${standard.max} $`"
+          left-thumb-color="light-blue-8"
+              right-thumb-color="blue-8"
+              v-model="standard"
+              :min="minval"
+              :max="maxval"
+              label-always
+              track-size="10px"
+              thumb-size="30px"
+              switch-label-side
+              :left-label-value="`${standard.min} $`"
+              :right-label-value="`${standard.max} $`"
+              inner-track-color="transparent"
+              selection-color="transparent"
         />
       </div>
+      </div>
+</div>
+      
     </div>
   </div>
 </template>
@@ -42,7 +52,7 @@
 import { ref, computed, watch, onBeforeMount, onMounted } from "vue";
 import { useProductStore } from "src/stores/products-store";
 const productStore = useProductStore();
-const interval = ref(10);
+const interval = ref(50);
 
 const minval = computed(() => {
   const details = productStore.productDetails[productStore.firstQuestionAskedOrNot];
@@ -51,7 +61,10 @@ const minval = computed(() => {
     return 0;
   }
   const prices = details.map((product) => parseFloat(product.price.value));
-  return Math.min(...prices) - 1;
+  if(Math.min(...prices)>0){
+    return Math.min(...prices) - 1;
+  }
+  else return Math.min(...prices);
 });
 const maxval = computed(() => {
   const details = productStore.productDetails[productStore.firstQuestionAskedOrNot];

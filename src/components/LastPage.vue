@@ -43,7 +43,7 @@ import { useProductStore } from "src/stores/products-store";
 import ProductComponent from "./ProductComponent.vue";
 const productStore = useProductStore();
 const topThreeProducts = (products: any) => products.slice(0, 3);
-const allProducts = (products: any) => products.slice(3, products.length);
+const allProducts = (products: any) => products.slice(3, 15);
 const backbutton = () => {
   productStore.firstQuestionAskedOrNot -= 1;
 };

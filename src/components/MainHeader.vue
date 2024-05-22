@@ -1,11 +1,11 @@
 <template>
   <div class="container">
     <transition appear enter-active-class="animated fadeInUp repeat">
-      <p class="text-center text-h2 q-my-xl text-primary" v-if="productStore.firstQuestionAskedOrNot != 6">
+      <p class="text-center q-my-xl text-primary" v-if="productStore.firstQuestionAskedOrNot != 6">
         <p class="text-center text-h4 q-ma-xl text-primary text-weight-bold" v-if="productStore.firstQuestionAskedOrNot == 0">
         Top earbuds and headphones: discover your perfect match from our list of 300 products
         </p>
-        <span class="q-my-md " v-else>
+        <span class="q-my-md text-h4" v-else>
           Find the best Earbuds or Headphones for you
         </span>
       </p>
