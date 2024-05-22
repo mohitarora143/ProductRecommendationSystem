@@ -7,6 +7,7 @@
         color="accent"
         class="text-body2 text-uppercase q-px-xl"
         @click="backbutton()"
+        :class="{ disabled: productStore.storeLoader }"
       >
         <q-icon name="keyboard_double_arrow_left" />
         <div>Back</div>
@@ -42,6 +43,8 @@ const skipbutton = async () => {
     await productStore.getProducts();
   } else if (productStore.firstQuestionAskedOrNot == 1) {
     await productStore.getProducts();
+    productStore.productDetails[productStore.firstQuestionAskedOrNot + 1] =
+      productStore.productDetails[productStore.firstQuestionAskedOrNot];
     productStore.firstQuestionAskedOrNot += 1;
   } else {
     await productStore.getProducts();
@@ -50,16 +53,18 @@ const skipbutton = async () => {
 
 const backbutton = () => {
   // Skip the third question if user does not select earbuds and wireless
-  if (
-    productStore.firstQuestionAskedOrNot == 3 &&
-    !(
-      productStore.budsOrHeadphones === "Earbud" &&
-      productStore.wiredOrWireless === "WirelessConnectivity"
-    )
-  ) {
-    productStore.firstQuestionAskedOrNot -= 2;
-  } else {
-    productStore.firstQuestionAskedOrNot -= 1;
+  if (!productStore.storeLoader) {
+    if (
+      productStore.firstQuestionAskedOrNot == 3 &&
+      !(
+        productStore.budsOrHeadphones === "Earbud" &&
+        productStore.wiredOrWireless === "WirelessConnectivity"
+      )
+    ) {
+      productStore.firstQuestionAskedOrNot -= 2;
+    } else {
+      productStore.firstQuestionAskedOrNot -= 1;
+    }
   }
 };
 </script>

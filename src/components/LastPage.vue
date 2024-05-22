@@ -1,11 +1,14 @@
 <template>
-  <div class="row justify-center">
-    <!-- {{ productStore.productDetails }} -->
-    <div
-      class="col-6 q-gutter-md q-mb-md"
-      v-for="(product, index) in topThreeProducts(productStore.productDetails)"
-    >
-      <product-component :Productdetails="product" :index="index" />
+  <div class="row">
+    <div class="row q-col-gutter-md q-pl-xl justify-center full-width">
+      <div
+        class="col-6"
+        v-for="(product, index) in topThreeProducts(
+          productStore.productDetails[productStore.firstQuestionAskedOrNot]
+        )"
+      >
+        <product-component :Productdetails="product" :index="index" />
+      </div>
     </div>
   </div>
 
@@ -13,12 +16,12 @@
     <div class="col-10 text-center text-h4 q-my-xl q-mx-auto">
       Other products fitting your needs
     </div>
-    <div class="row q-col-gutter-md offset-1">
+    <div class="row q-col-gutter-md q-ml-xl">
       <div
         class="col-6"
-        v-for="(product, index) in allProducts(productStore.productDetails)"
+        v-for="(product, index) in allProducts(productStore.productDetails[productStore.firstQuestionAskedOrNot])"
       >
-        <product-component :Productdetails="product" :index="index" />
+        <product-component :Productdetails="product" :index="index+3" />
       </div>
     </div>
   </div>

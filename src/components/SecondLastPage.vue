@@ -55,6 +55,16 @@
           <right-arrow-svg class="q-ml-sm"/>
         </button>
       </div>
+      <q-btn
+        size="12px"
+        outline
+        color="accent"
+        class="text-body2 text-uppercase q-px-xl"
+        @click="backbutton()"
+      >
+        <q-icon name="keyboard_double_arrow_left" />
+        <div>Back</div>
+      </q-btn>
     </div>
   </div>
 </template>
@@ -67,6 +77,26 @@ import { useProductStore } from "src/stores/products-store";
 const productStore = useProductStore();
 
 const seeMyRecommendations = () => {
+  productStore.productDetails[productStore.firstQuestionAskedOrNot].forEach((item) => {
+    delete item.animation;
+  });
+  productStore.productDetails[productStore.firstQuestionAskedOrNot+1]=productStore.productDetails[productStore.firstQuestionAskedOrNot];
   productStore.firstQuestionAskedOrNot = 7;
 }
+const backbutton = () => {
+  // Skip the third question if user does not select earbuds and wireless
+  if (!productStore.storeLoader) {
+    if (
+      productStore.firstQuestionAskedOrNot == 3 &&
+      !(
+        productStore.budsOrHeadphones === "Earbud" &&
+        productStore.wiredOrWireless === "WirelessConnectivity"
+      )
+    ) {
+      productStore.firstQuestionAskedOrNot -= 2;
+    } else {
+      productStore.firstQuestionAskedOrNot -= 1;
+    }
+  }
+};
 </script>

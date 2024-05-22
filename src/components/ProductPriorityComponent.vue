@@ -2,9 +2,7 @@
   <div class="text-h5 q-my-md text-weight-bold font-sans">
     {{ props.Question }}
   </div>
-  <div
-    class="text-subtitle1 q-my-sm font-sans text-weight-medium text-secondary"
-  >
+  <div class="text-subtitle1 q-my-sm font-sans text-weight-medium text-secondary">
     {{ props.SubQuestion }}
   </div>
   <div class="">
@@ -32,28 +30,32 @@
                 <q-icon
                   name="headset"
                   color="secondary"
-                  class="q-mr-xs"
+                  class="q-mr-sm"
+                  :class="{ 'text-white': element.value }"
                   size="20px"
                   v-if="element.id == 0"
                 />
                 <q-icon
                   name="mic"
                   color="secondary"
-                  class="q-mr-xs"
+                  class="q-mr-sm"
+                  :class="{ 'text-white': element.value }"
                   size="20px"
                   v-if="element.id == 1"
                 />
                 <q-icon
                   name="phone"
                   color="secondary"
-                  class="q-mr-xs"
+                  class="q-mr-sm"
+                  :class="{ 'text-white': element.value }"
                   size="20px"
                   v-if="element.id == 2"
                 />
                 <q-icon
                   name="music_note"
                   color="secondary"
-                  class="q-mr-xs"
+                  class="q-mr-sm"
+                  :class="{ 'text-white': element.value }"
                   size="20px"
                   v-if="element.id == 3"
                 />
@@ -80,7 +82,10 @@
         <div>Back</div>
       </q-btn>
     </div>
-    <div class="font-primary text-negative q-ma-md text-subtitle1" v-if="priorityErrorMsg">
+    <div
+      class="font-primary text-negative q-ma-md text-subtitle1"
+      v-if="priorityErrorMsg"
+    >
       You've selected already two features. Deselect one of them.
     </div>
   </div>
@@ -135,156 +140,29 @@ const selectedProductPriority = (selected: any) => {
   }
   priorityErrorMsg.value = false;
   selected.value = !selected.value;
-  const trueValues = priorityList.value.filter(
-    (element) => element.value === true
-  );
+  const trueValues = priorityList.value.filter((element) => element.value === true);
   filterProductByPriority(trueValues);
+  //Apply animation after filtering
+  setTimeout(() => {
+    applyAnimation();
+  }, 1);
 };
-
-// const list = ref(reactive(priorityList.value));
-
-// const filterProductByPriority = (priorities) => {
-//   productStore.productPriority = [];
-//   for (const i in priorities) {
-//     productStore.productPriority.push(priorities[i].name);
-//   }
-//   console.log("Product Priority", productStore.productPriority);
-//   let filteredProductsWithPriority = [];
-//   for (let i = 0; i < 2; i++) {
-//     let filteredTemp = [];
-//     if (productStore.productPriority[i] === "Active Noice Canceling") {
-//       for (const product of productStore.productDetails) {
-//         if (product.ANC_Score != null) {
-//           filteredTemp.push(product);
-//           filteredTemp.sort((a, b) => {
-//             const ANC_ScoreA = parseFloat(a.ANC_Score.value);
-//             const ANC_ScoreB = parseFloat(b.ANC_Score.value);
-//             if (ANC_ScoreA > ANC_ScoreB) {
-//               return -1;
-//             }
-//             if (ANC_ScoreA < ANC_ScoreB) {
-//               return 1;
-//             }
-
-//             return 0;
-//           });
-//           filteredTemp = filteredTemp.filter((product) => {
-//             return (
-//               product.price.value >= productStore.priceRange.min &&
-//               product.price.value <= productStore.priceRange.max
-//             );
-//           });
-//         }
-//       }
-//     } else if (productStore.productPriority[i] === "Microphone") {
-//       for (const product of productStore.productDetails) {
-//         if (product.microphoneScore != null) {
-//           filteredTemp.push(product);
-//           filteredTemp.sort((a, b) => {
-//             const microphoneScoreA = parseFloat(a.microphoneScore.value);
-//             const microphoneScoreB = parseFloat(b.microphoneScore.value);
-//             if (microphoneScoreA > microphoneScoreB) {
-//               return -1;
-//             }
-//             if (microphoneScoreA < microphoneScoreB) {
-//               return 1;
-//             }
-
-//             return 0;
-//           });
-//           filteredTemp = filteredTemp.filter((product) => {
-//             return (
-//               product.price.value >= productStore.priceRange.min &&
-//               product.price.value <= productStore.priceRange.max
-//             );
-//           });
-//         }
-//       }
-//     } else if (productStore.productPriority[i] === "Battery Life") {
-//       for (const product of productStore.productDetails) {
-//         if (product.batteryLifeScore != null) {
-//           filteredTemp.push(product);
-//           filteredTemp.sort((a, b) => {
-//             const batteryLifeScoreA = parseFloat(a.batteryLifeScore.value);
-//             const batteryLifeScoreB = parseFloat(b.batteryLifeScore.value);
-//             if (batteryLifeScoreA > batteryLifeScoreB) {
-//               return -1;
-//             }
-//             if (batteryLifeScoreA < batteryLifeScoreB) {
-//               return 1;
-//             }
-
-//             return 0;
-//           });
-//           filteredTemp = filteredTemp.filter((product) => {
-//             return (
-//               product.price.value >= productStore.priceRange.min &&
-//               product.price.value <= productStore.priceRange.max
-//             );
-//           });
-//         }
-//       }
-//     } else if (productStore.productPriority[i] === "Sound Quality") {
-//       for (const product of productStore.productDetails) {
-//         if (product.soundQualityScore != null) {
-//           filteredTemp.push(product);
-//           filteredTemp.sort((a, b) => {
-//             const soundQualityScoreA = parseFloat(a.soundQualityScore.value);
-//             const soundQualityScoreB = parseFloat(b.soundQualityScore.value);
-//             if (soundQualityScoreA > soundQualityScoreB) {
-//               return -1;
-//             }
-//             if (soundQualityScoreA < soundQualityScoreB) {
-//               return 1;
-//             }
-
-//             return 0;
-//           });
-//           filteredTemp = filteredTemp.filter((product) => {
-//             return (
-//               product.price.value >= productStore.priceRange.min &&
-//               product.price.value <= productStore.priceRange.max
-//             );
-//           });
-//         }
-//       }
-//     }
-//     console.log(productStore.productPriority[i], filteredTemp);
-//     filteredProductsWithPriority =
-//       filteredProductsWithPriority.concat(filteredTemp);
-//   }
-//   let filteredTemp = [];
-//   for (const product of productStore.productDetails) {
-//     filteredTemp.push(product);
-//     filteredTemp.sort((a, b) => {
-//       const finalScoreA = parseFloat(a.finalScore.value);
-//       const finalScoreB = parseFloat(b.finalScore.value);
-//       if (finalScoreA > finalScoreB) {
-//         return -1;
-//       }
-//       if (finalScoreA < finalScoreB) {
-//         return 1;
-//       }
-//       return 0;
-//     });
-//   }
-//   filteredProductsWithPriority = filteredProductsWithPriority.concat(
-//     filteredTemp
-//   );
-//   filteredProductsWithPriority = Array.from(
-//     new Set(filteredProductsWithPriority)
-//   );
-//   productStore.productDetails = filteredProductsWithPriority;
-//   console.log(productStore.productDetails);
-// };
 
 const filterProductByPriority = (priority) => {
   // console.log(priority[i]);
+  productStore.oldProducts = [
+    ...productStore.productDetails[productStore.firstQuestionAskedOrNot],
+  ];
+  //Delete the animation property from all the products so that we can add new or previous animation to it
+  productStore.productDetails[productStore.firstQuestionAskedOrNot].forEach((item) => {
+    delete item.animation;
+  });
+  productStore.newProducts = [...productStore.productDetails[productStore.firstQuestionAskedOrNot]]
   if (priority.length == 2) {
     const feature1 = priority[0].apiName;
     const feature2 = priority[1].apiName;
-    console.log(feature1, feature2);
-    productStore.productDetails.sort((a, b) => {
+    // console.log(feature1, feature2);
+    productStore.newProducts.sort((a, b) => {
       const threshold = 0.5;
       let aFeature1 = 0;
       let bFeature1 = 0;
@@ -318,8 +196,8 @@ const filterProductByPriority = (priority) => {
   } else if (priority.length == 1) {
     const feature1 = priority[0].apiName;
     const feature2 = priority[0].apiName;
-    console.log(feature1, feature2);
-    productStore.productDetails.sort((a, b) => {
+    // console.log(feature1, feature2);
+    productStore.newProducts.sort((a, b) => {
       const threshold = 0.5;
       let aFeature1 = 0;
       let bFeature1 = 0;
@@ -351,15 +229,66 @@ const filterProductByPriority = (priority) => {
       return bFeature2 - aFeature2;
     });
   } else {
-    console.log("no priority");
+    productStore.newProducts.sort((a, b) => {
+      return parseFloat(b.finalScore.value) - parseFloat(a.finalScore.value);
+    });
+    // console.log("No priority");
   }
-  // const feature1 = priority[0].apiName;
-  // const feature2 = priority[1].apiName;
 };
 
-// watch(priorityList.value, (newValue) => {
-//   filterProductByPriority(newValue);
-// });
+const applyAnimation = () => {
+  for (let i = 0; i < 3; i++) {
+    //If all top three products are same as before
+    if (
+      productStore.newProducts[i].name.value ==
+      productStore.oldProducts[i].name.value
+    ) {
+      productStore.newProducts[i].animation = {
+        value: "slidezigzag",
+      };
+    } 
+    //If products are same but their positions are different or products are totally different
+    else if (
+      productStore.newProducts[i].name.value !=
+      productStore.oldProducts[i].name.value
+    ) {
+      // console.log("Not equal");
+      for (let j = 0; j < 3; j++) {
+        //If products are same but their positions are different
+        if (
+          productStore.newProducts[i].name
+            .value == productStore.oldProducts[j].name.value
+        ) {
+          if (i > j) {
+            productStore.newProducts[
+              i
+            ].animation = { value: "slideDown" };
+          } else if (i < j) {
+            productStore.newProducts[
+              i
+            ].animation = { value: "slideUp" };
+          }
+        }
+        //If products are totally different 
+        else if (
+          productStore.newProducts[i].name
+            .value != productStore.oldProducts[j].name.value
+        ) {
+          if (
+            !productStore.newProducts[i]
+              .animation
+          ) {
+            productStore.newProducts[
+              i
+            ].animation = { value: "slideIn" };
+          }
+        }
+      }
+    }
+  }
+  productStore.productDetails[productStore.firstQuestionAskedOrNot] = productStore.newProducts
+  console.log('newProducts: ', productStore.productDetails[productStore.firstQuestionAskedOrNot]);
+};
 
 const backbutton = () => {
   productStore.firstQuestionAskedOrNot -= 1;

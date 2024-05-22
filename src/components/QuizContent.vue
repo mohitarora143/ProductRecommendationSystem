@@ -132,20 +132,80 @@
     </div>
 
     <div class="col-6 q-gutter-md overflow-hidden">
-      <div class="text-center" v-if="productStore.storeLoader">
+      <!-- <div class="text-center" v-if="productStore.storeLoader">
         <LoaderComponent />
-      </div>
-      <span class="q-gutter-md" v-else>
-        <div v-for="(product, index) in topThreeProducts(productStore.productDetails)">
+      </div> -->
+      <span class="q-gutter-md">
+        <div
+          v-for="(product, index) in topThreeProducts(
+            productStore.productDetails[productStore.firstQuestionAskedOrNot]
+          )"
+        >
           <product-component
-            v-if="productStore.firstQuestionAskedOrNot != 6"
+            v-if="productStore.firstQuestionAskedOrNot == 0"
             :Productdetails="product"
             :index="index"
           />
         </div>
-        <price-filter-component
-          v-if="productStore.firstQuestionAskedOrNot <= 3"
-        />
+        <div
+          v-for="(product, index) in topThreeProducts(
+            productStore.productDetails[productStore.firstQuestionAskedOrNot]
+          )"
+        >
+          <product-component
+            v-if="productStore.firstQuestionAskedOrNot == 1"
+            :Productdetails="product"
+            :index="index"
+          />
+        </div>
+        <div
+          v-for="(product, index) in topThreeProducts(
+            productStore.productDetails[productStore.firstQuestionAskedOrNot]
+          )"
+        >
+          <product-component
+            v-if="productStore.firstQuestionAskedOrNot == 2"
+            :Productdetails="product"
+            :index="index"
+          />
+        </div>
+        <div
+          v-for="(product, index) in topThreeProducts(
+            productStore.productDetails[productStore.firstQuestionAskedOrNot]
+          )"
+        >
+          <product-component
+            v-if="productStore.firstQuestionAskedOrNot == 3"
+            :Productdetails="product"
+            :index="index"
+          />
+        </div>
+        <div
+          v-for="(product, index) in topThreeProducts(
+            productStore.productDetails[productStore.firstQuestionAskedOrNot]
+          )"
+        >
+          <product-component
+            v-if="productStore.firstQuestionAskedOrNot == 4"
+            :Productdetails="product"
+            :index="index"
+          />
+        </div>
+        <div
+          v-for="(product, index) in topThreeProducts(
+            productStore.productDetails[productStore.firstQuestionAskedOrNot]
+          )"
+        >
+          <product-component
+            v-if="productStore.firstQuestionAskedOrNot == 5"
+            :Productdetails="product"
+            :index="index"
+          />
+        </div>
+
+        <div v-if="productStore.firstQuestionAskedOrNot <= 4">
+          <price-filter-component />
+        </div>
         <div
           class="q-my-lg text-center q-pr-xl"
           v-if="productStore.firstQuestionAskedOrNot == 5"
@@ -163,8 +223,8 @@
       </span>
     </div>
   </div>
-
-  <last-page v-if="productStore.firstQuestionAskedOrNot == 6" />
+  <second-last-page v-if="productStore.firstQuestionAskedOrNot == 6"/>
+  <last-page v-if="productStore.firstQuestionAskedOrNot == 7" />
 </template>
 
 <script setup lang="ts">
@@ -174,10 +234,11 @@ import ProductComponent from "./ProductComponent.vue";
 import SkipAndBackButton from "./SkipAndBackButton.vue";
 import CheckboxQuestion from "./CheckboxQuestion.vue";
 import ProductPriorityComponent from "./ProductPriorityComponent.vue";
+import SecondLastPage from "./SecondLastPage.vue";
 import LastPage from "./LastPage.vue";
 import PriceFilterComponent from "./PriceFilterComponent.vue";
 import LoaderComponent from "./LoaderComponent.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted,onBeforeMount } from "vue";
 
 const productStore = useProductStore();
 
@@ -190,12 +251,24 @@ const skipbutton = () => {
   }
 };
 const seeFullList = () => {
+  //Assigning value of priority question to last page
+  productStore.productDetails[productStore.firstQuestionAskedOrNot].forEach((item) => {
+    delete item.animation;
+  });
+  productStore.productDetails[productStore.firstQuestionAskedOrNot+1]=productStore.productDetails[productStore.firstQuestionAskedOrNot];
   productStore.firstQuestionAskedOrNot = 6;
+  console.log('productStore.productDetails: ', productStore.productDetails);
 };
 
-onMounted(() => {
+onBeforeMount(() => {
   productStore.topFiveProducts();
 });
 
-const topThreeProducts = (products: any) => products.slice(0, 3);
+const topThreeProducts = (products: any) => {
+  if (products) {
+    return products.slice(0, 3);
+  } else {
+    return [];
+  }
+};
 </script>

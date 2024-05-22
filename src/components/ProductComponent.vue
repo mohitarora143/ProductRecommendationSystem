@@ -1,14 +1,44 @@
 <template>
-  <div class="row">
+  <div class="row card-wrapper">
     <q-card
-      class="cursor-pointer col-md-11 slide-right"
-      :style="{ animationDelay: `${0.05 * props.index}s` }"
-      id="animatedDiv"
+      class="cursor-pointer col-md-11 my-card"
+      :class="{
+        'slide-up': productStore.productDetails[
+          productStore.firstQuestionAskedOrNot
+        ][props.index].animation
+          ? productStore.productDetails[productStore.firstQuestionAskedOrNot][
+              props.index
+            ].animation.value === 'slideUp'
+          : false,
+        'slide-down': productStore.productDetails[
+          productStore.firstQuestionAskedOrNot
+        ][props.index].animation
+          ? productStore.productDetails[productStore.firstQuestionAskedOrNot][
+              props.index
+            ].animation.value === 'slideDown'
+          : false,
+        'slide-zig-zag': productStore.productDetails[
+          productStore.firstQuestionAskedOrNot
+        ][props.index].animation
+          ? productStore.productDetails[productStore.firstQuestionAskedOrNot][
+              props.index
+            ].animation.value === 'slidezigzag'
+          : false,
+        'slide-in': productStore.productDetails[
+          productStore.firstQuestionAskedOrNot
+        ][props.index].animation
+          ? productStore.productDetails[productStore.firstQuestionAskedOrNot][
+              props.index
+            ].animation.value === 'slideIn'
+          : false,
+        disabled: productStore.storeLoader,
+      }"
       @click="viewSpecs()"
+      :style="{ animationDelay: `${0.033 * props.index}s` }"
     >
       <div class="product-number" style="opacity: 1">
         <div
-          class="flex justify-center items-center border w-7 h-7 bg-secondary border-grey-circle text-gray-900"
+          class="flex justify-center items-center border w-7 h-7 bg-secondary border-grey-circle text-gray-900 indexing-styling"
         >
           <div class="text-xs leading-zero font-sans font-bold text-white">
             {{ props.index + 1 }}
@@ -16,16 +46,54 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-4 q-pa-md overflow-hidden">
-          <div class="overflow-hidden">
-            <img
-              :src="
-                props.Productdetails.imageURL
-                  ? props.Productdetails.imageURL.value
-                  : ''
-              "
-              class="product-image"
-            />
+        <div class="col-4 overflow-hidden">
+          <div
+            class="overflow-hidden relative-position full-height justify-center items-center row hover-scale"
+          >
+            <div class="col-8 text-center">
+              <img
+                :src="
+                  props.Productdetails.imageURL
+                    ? props.Productdetails.imageURL.value
+                    : ''
+                "
+                class="product-image"
+                alt="product-image"
+              />
+            </div>
+            <div class="col-4">
+              <div v-if="props.Productdetails.badgeURL">
+                <img
+                  :src="
+                    props.Productdetails.badgeURL
+                      ? props.Productdetails.badgeURL.value
+                      : ''
+                  "
+                  class="product-badge"
+                  alt="badge"
+                />
+              </div>
+              <div class="progress-rating absolute q-pl-sm">
+                <q-knob
+                  :modelValue="0"
+                  readonly
+                  :angle="180"
+                  :min="0"
+                  :max="10"
+                  :value="
+                    props.Productdetails.valueScore
+                      ? Number(props.Productdetails.valueScore.value)
+                      : ''
+                  "
+                  show-value
+                  size="42px"
+                  :thickness="0.22"
+                  color="secondary"
+                  track-color="light-green-1"
+                  class="text-secondary text-h6"
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-8 q-py-sm q-px-md bg-info column justify-between">
@@ -45,41 +113,25 @@
               </div>
             </div>
             <span
-              class="text-small text-weight-bold q-pt-xs text-letter-spacing"
-              v-if="props.Productdetails.allBestListNames.value"
+              class="text-small text-weight-medium q-pt-xs text-letter-spacing"
+              v-if="props.Productdetails.productPro.value.length > 0"
             >
-              Pros:-
+              Pros:
               {{
-                props.Productdetails.allBestListNames
-                  ? props.Productdetails.allBestListNames.value
+                props.Productdetails.productPro
+                  ? replaceWithDot(props.Productdetails.productPro.value)
                   : ""
               }}
             </span>
-            <div class="text-small font-sans text-weight-bold q-my-auto q-pt-xs q-pb-sm">
+            <div
+              class="text-small font-sans text-weight-bold q-my-auto q-pt-xs q-pb-sm"
+            >
               MRSP:- ${{
                 props.Productdetails.price
                   ? props.Productdetails.price.value
                   : 0
               }}
             </div>
-            <!-- <span class="text-gray-500 text-weight-medium"
-              >Avg Score:-
-              {{
-                props.Productdetails.productAverageScore
-                  ? parseFloat(
-                      props.Productdetails.productAverageScore.value
-                    ).toFixed(2)
-                  : "0"
-              }}</span
-            >
-            <span class="text-gray-500 text-weight-medium"
-              >Final Score:-
-              {{
-                props.Productdetails.finalScore
-                  ? parseFloat(props.Productdetails.finalScore.value).toFixed(2)
-                  : "0"
-              }}</span
-            > -->
             <transition
               appear
               appear-class="delayed-appear"
@@ -160,6 +212,7 @@
                   viewPriceOnAmazon(props.Productdetails.productURL.value)
                 "
                 style="width: 125px"
+                @click.stop
               >
                 Check Price
               </q-btn>
@@ -179,7 +232,7 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none text-center column">
-        <div class="overflow-hidden">
+        <div class="overflow-hidden q-mb-md">
           <img
             :src="
               props.Productdetails.imageURL
@@ -189,11 +242,25 @@
             class="q-mx-auto product-specs-image"
           />
         </div>
-        <span class="text-h5 font-sans text-weight-bold">{{
-          props.Productdetails.name ? props.Productdetails.name.value : ""
-        }}</span>
-        <span class="text-subtitle1 font-sans text-weight-regular"
-          ><span class="text-h6 font-sans"> Product Overview:- </span>
+        <div class="row justify-between q-px-md q-my-lg">
+          <span class="text-h4 font-sans text-weight-medium">{{
+            props.Productdetails.name ? props.Productdetails.name.value : ""
+          }}</span>
+          <div>
+            <q-btn
+              class="text-caption font-sans text-white text-weight-medium bg-orange rounded-xl full-height text-capitalize"
+              size="12px"
+              @click="viewPriceOnAmazon(props.Productdetails.productURL.value)"
+              style="width: 150px"
+            >
+              Check Price
+            </q-btn>
+          </div>
+        </div>
+
+        <span
+          class="text-subtitle1 font-sans text-weight-regular text-left q-ml-md q-mr-xl text-italic q-my-md"
+        >
           {{
             props.Productdetails.fullOverview
               ? props.Productdetails.fullOverview.value
@@ -201,77 +268,261 @@
           }}</span
         >
         <span
-          class="text-subtitle1 font-sans text-weight-regular"
-          v-if="props.Productdetails.allBestListNames.value"
-          ><span class="text-h6 font-sans"> Pros:- </span>
-          {{ props.Productdetails.allBestListNames.value }}</span
+          class="text-subtitle1 font-sans text-weight-bold text-left q-ml-md q-mr-xl cursor-pointer q-mt-md q-mb-lg products-review-text-decoration"
+          @click="productReview(props.Productdetails.productReview.value)"
+          v-if="props.Productdetails.productReview"
         >
-
-        <div class="q-mx-auto q-my-md">
-          <button
-            class="flex justify-center hover:bg-blue-700 border-blue-600 border text-blue text-subtitle1 q-px-md q-py-sm font-sans rounded-xl cursor-pointer text-weight-medium"
-            size="md"
-            color="primary"
-          >
-            Compare recommendations
-            <right-arrow-svg class="q-ml-sm" />
-          </button>
-        </div>
-
-        <div class="column q-col-gutter-md">
-          <div class="row q-col-gutter-lg">
-            <div class="col-6">
-              <product-specs
-                :productSpecs="props.Productdetails"
-                :specs="generalSpecs"
-                :title="'GENERAL'"
-              />
-            </div>
-            <div class="col-6">
-              <product-specs
-                :productSpecs="props.Productdetails"
-                :specs="performanceSpecs"
-                :title="'PERFORMANCE'"
-              />
-            </div>
-            <div class="col-6">
-              <product-specs
-                :productSpecs="props.Productdetails"
-                :specs="soundSpecs"
-                :title="'SOUND'"
-              />
-            </div>
-            <div class="col-6">
-              <product-specs
-                :productSpecs="props.Productdetails"
-                :specs="featureSpecs"
-                :title="'FEATURES'"
-              />
-            </div>
-            <div class="col-6">
-              <product-specs
-                :productSpecs="props.Productdetails"
-                :specs="buildAndDesign"
-                :title="'BUILD & DESIGN'"
-              />
-            </div>
+          Read Our Full Review...
+        </span>
+        <div class="row q-my-md">
+          <div class="col-6 text-left">
+            <div class="q-pl-md text-h6">What we like</div>
+            <ul class="custom-pros-list q-pl-md">
+              <li
+                v-for="(item, index) in productProList"
+                :key="index"
+                class="text-gray-500 q-py-sm pros-and-cons-letter-spacing"
+              >
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+          <div class="col-6 text-left">
+            <div class="q-pl-md text-h6">What we don't like</div>
+            <ul class="custom-cons-list q-pl-md">
+              <li
+                v-for="(item, index) in productConList"
+                :key="index"
+                class="text-gray-500 q-py-sm pros-and-cons-letter-spacing"
+              >
+                {{ item }}
+              </li>
+            </ul>
           </div>
         </div>
+        <q-table
+          flat
+          :rows="rows"
+          :columns="columns"
+          row-key="name"
+          separator="none"
+          hide-pagination
+          class="rounded-xl light-grey"
+        >
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+                class="text-weight-bold"
+              >
+                <div
+                  v-if="col.name == 'Rating_Metric'"
+                  class="text-subtitle1 text-weight-bold"
+                >
+                  {{ col.label }}
+                </div>
+                <div
+                  v-else
+                  class="table-header text-subtitle1 text-weight-bold"
+                >
+                  {{ col.label }}
+                </div>
+              </q-th>
+            </q-tr>
+          </template>
+
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td key="name" :props="props" class="text-caption text-weight-bold">
+                {{ props.row.name }}
+              </q-td>
+              <q-td key="first_name" :props="props" class="text-caption text-weight-bold">
+                  {{ props.row.first_name }}
+              </q-td>
+              <q-td key="second_name" :props="props" class="text-caption text-weight-bold">
+                  {{ props.row.second_name }}
+              </q-td>
+              <q-td key="third_name" :props="props" class="text-caption text-weight-bold">
+                  {{ props.row.third_name }}
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import SimpleRightArrowSvg from "./svg/SimpleRightArrowSvg.vue";
-import RightArrowSvg from "../components/svg/RightArrowSvg.vue";
-import ProductSpecs from "./ProductSpecs.vue";
 import { useProductStore } from "src/stores/products-store";
+import { ref, computed, onBeforeUnmount } from "vue";
 const productStore = useProductStore();
 
-import { ref, computed } from "vue";
 const props = defineProps(["Productdetails", "index"]);
 const viewSpecifications = ref(false);
+
+const productReview = (reviewLink) => {
+  window.open(reviewLink, "_blank");
+};
+
+const columns = ref([
+  {
+    name: "name",
+    required: true,
+    label: "Rating Metric",
+    align: "left",
+    field: (row) => row.name,
+    format: (val) => `${val}`,
+  },
+  {
+    name: "first_name",
+    align: "center",
+    label: computed(
+      () =>
+        productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+          .name.value
+    ),
+    field: "first_name",
+  },
+  {
+    name: "second_name",
+    align: "center",
+    label: computed(
+      () =>
+        productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+          .name.value
+    ),
+    field: "second_name",
+  },
+  {
+    name: "third_name",
+    align: "center",
+    label: computed(
+      () =>
+        productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+          .name.value
+    ),
+    field: "third_name",
+  },
+]);
+
+const rows = ref([
+  {
+    name: "Durability",
+    first_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+        .durabilityScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+            .durabilityScore.value
+        : "-"
+    ),
+    second_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+        .durabilityScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+            .durabilityScore.value
+        : "-"
+    ),
+    third_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+        .durabilityScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+            .durabilityScore.value
+        : "-"
+    ),
+  },
+  {
+    name: "Value",
+    first_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+        .valueScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+            .valueScore.value
+        : "-"
+    ),
+    second_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+        .valueScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+            .valueScore.value
+        : "-"
+    ),
+    third_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+        .valueScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+            .valueScore.value
+        : "-"
+    ),
+  },
+  {
+    name: "Design",
+    first_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+        .designScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+            .designScore.value
+        : "-"
+    ),
+    second_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+        .designScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+            .designScore.value
+        : "-"
+    ),
+    third_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+        .designScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+            .designScore.value
+        : "-"
+    ),
+  },
+  {
+    name: "Connectivity",
+    first_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+        .connectivityScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][0]
+            .connectivityScore.value
+        : "-"
+    ),
+    second_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+        .connectivityScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][1]
+            .connectivityScore.value
+        : "-"
+    ),
+    third_name: computed(() =>
+      productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+        .connectivityScore
+        ? productStore.productDetails[productStore.firstQuestionAskedOrNot][2]
+            .connectivityScore.value
+        : "-"
+    ),
+  },
+]);
+
+const productProList = computed(() => {
+  return props.Productdetails.productPro.value
+    .split("|")
+    .map((item) => item.trim());
+});
+
+const productConList = computed(() => {
+  return props.Productdetails.productCon.value
+    .split("|")
+    .map((item) => item.trim());
+});
+
+const replaceWithDot = (str) => {
+  const parts = str.split("|");
+  return parts.map((part) => `• ${part.trim()}`).join(" ");
+};
 
 const DeviceType = () => {
   if (props.Productdetails.allBestListNames) {
@@ -286,200 +537,15 @@ const DeviceType = () => {
   } else return false;
 };
 
-const generalSpecs = computed(() => [
-  {
-    name: "Price",
-    value: props.Productdetails.price ? props.Productdetails.price.value : "",
-  },
-  {
-    name: "Brand",
-    value: props.Productdetails.name
-      ? props.Productdetails.name.value.split(" ")[0]
-      : "",
-  },
-  {
-    name: "Release Date",
-    value: "",
-  },
-  {
-    name: "Form Factor",
-    value: "",
-  },
-  {
-    name: "Connectivity",
-    value: props.Productdetails.connectivityScore ? "Wireless" : "Wired",
-  },
-  {
-    name: "Average Score",
-    value: props.Productdetails.productAverageScore
-      ? parseFloat(props.Productdetails.productAverageScore.value).toFixed(2)
-      : "",
-  },
-]);
-const performanceSpecs = computed(() => [
-  {
-    name: "Battery life",
-    value: "",
-  },
-  {
-    name: "Wireless charging",
-    value: "",
-  },
-  {
-    name: "Charging time",
-    value: "",
-  },
-  {
-    name: "Bluetooth version",
-    value: "",
-  },
-  {
-    name: "Case Battery Life",
-    value: "",
-  },
-]);
-const soundSpecs = computed(() => [
-  {
-    name: "Sound Quality",
-    value: props.Productdetails.soundQualityScore
-      ? `${props.Productdetails.soundQualityScore.value}/10`
-      : "",
-  },
-  {
-    name: "Bass Score",
-    value: props.Productdetails.bassScore
-      ? `${props.Productdetails.bassScore.value}/10`
-      : "",
-  },
-  {
-    name: "Music Score",
-    value: "",
-  },
-  {
-    name: "Phone Calls Score",
-    value: "",
-  },
-  {
-    name: "Gaming Score",
-    value: "",
-  },
-  {
-    name: "Tv and Video Score",
-    value: "",
-  },
-  {
-    name: "Exercise Score",
-    value: "",
-  },
-  {
-    name: "Air Travel Score",
-    value: "",
-  },
-  {
-    name: "Podcasts and Audiobooks Score",
-    value: "",
-  },
-  {
-    name: "Sound Profile",
-    value: "",
-  },
-]);
-const featureSpecs = computed(() => [
-  {
-    name: "Active Noise Cancelling",
-    value: props.Productdetails.ANC_Score ? "Yes" : "No",
-  },
-  {
-    name: "Noise Reduction Score",
-    value: "",
-  },
-  {
-    name: "Virtual Surround",
-    value: "",
-  },
-  {
-    name: "Android App",
-    value: "",
-  },
-  {
-    name: "iOS App",
-    value: "",
-  },
-  {
-    name: "Mic Quality",
-    value: props.Productdetails.microphoneScore
-      ? `${props.Productdetails.microphoneScore.value}/10`
-      : "0",
-  },
-]);
-const buildAndDesign = computed(() => [
-  {
-    name: "Build Quality",
-    value: props.Productdetails.durabilityScore
-      ? `${props.Productdetails.durabilityScore.value}/10`
-      : "0",
-  },
-  {
-    name: "Design Score",
-    value: props.Productdetails.designScore
-      ? `${props.Productdetails.designScore.value}/10`
-      : "0",
-  },
-  {
-    name: "Comfort score",
-    value: props.Productdetails.comfortScore
-      ? `${props.Productdetails.comfortScore.value}/10`
-      : "0",
-  },
-  {
-    name: "Size",
-    value: "",
-  },
-  {
-    name: "Fit Small Ear",
-    value: props.Productdetails.fitsSmallEars
-      ? `${props.Productdetails.fitsSmallEars.value}/10`
-      : "",
-  },
-  {
-    name: "Weight of single earbud",
-    value: "",
-  },
-  {
-    name: "Microphone style",
-    value: "",
-  },
-  {
-    name: "Waterproof Rating",
-    value: "",
-  },
-  {
-    name: "Dustproof Rating",
-    value: "",
-  },
-  {
-    name: "Eartip sizes included",
-    value: "",
-  },
-  {
-    name: "Color variations",
-    value: "",
-  },
-  {
-    name: "Low Latency",
-    value: "",
-  },
-  {
-    name: "Lossless Codec",
-    value: "",
-  },
-]);
-
 const viewSpecs = () => {
-  viewSpecifications.value = true;
+  if (!productStore.storeLoader) {
+    viewSpecifications.value = true;
+  }
 };
 const viewPriceOnAmazon = (link) => {
-  window.open(link, "_blank");
+  if (!productStore.storeLoader) {
+    window.open(link, "_blank");
+  }
 };
 </script>
 
